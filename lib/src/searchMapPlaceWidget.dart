@@ -3,6 +3,7 @@ part of search_map_place;
 class SearchMapPlaceWidget extends StatefulWidget {
   SearchMapPlaceWidget({
     required this.apiKey,
+    required this.onSearchLocation,
     this.placeholder = 'Search',
     this.icon = Icons.search,
     this.hasClearButton = true,
@@ -73,6 +74,9 @@ class SearchMapPlaceWidget extends StatefulWidget {
   /// Enables Dark Mode when set to `true`. Default value is `false`.
   final bool darkMode;
 
+  final Future<List<Widget>> Function(List<dynamic>, Geocoding geocode)
+      onSearchLocation;
+
   @override
   _SearchMapPlaceWidgetState createState() => _SearchMapPlaceWidgetState();
 }
@@ -86,7 +90,7 @@ class _SearchMapPlaceWidgetState extends State<SearchMapPlaceWidget>
   // Place options opacity.
   late Animation _listOpacity;
 
-  List<dynamic>? _placePredictions = [];
+  List<dynamic> _placePredictions = [];
   bool _isEditing = false;
   Geocoding? geocode;
 
@@ -152,23 +156,39 @@ class _SearchMapPlaceWidgetState extends State<SearchMapPlaceWidget>
           return Container(
             height: _containerHeight.value,
             decoration: _containerDecoration(),
+            padding: EdgeInsets.only(left: 0, right: 0, top: 15),
+            alignment: Alignment.center,
             child: Column(
               children: <Widget>[
-                Padding(
-                  padding:
-                      const EdgeInsets.only(left: 12.0, right: 12.0, top: 4),
-                  child: child,
-                ),
-                if (_placePredictions!.length > 0)
-                  Opacity(
-                    opacity: _listOpacity.value,
-                    child: Column(
-                      children: <Widget>[
-                        for (var prediction in _placePredictions!)
-                          _placeOption(Place.fromJSON(prediction, geocode)),
-                      ],
-                    ),
+                Container(
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8)),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                    child: child,
                   ),
+                ),
+                SizedBox(height: 10),
+                Expanded(
+                    child: Container(
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8)),
+                      child: FutureBuilder<List<Widget>>(
+                        future: widget.onSearchLocation(_placePredictions,geocode!),
+                        builder:(context,snapshot){
+                           return snapshot.hasData
+                            ? ListView.builder(
+                                itemCount: snapshot.data?.length ?? 0,
+                                itemBuilder: (builderContext, position) {
+                                  return snapshot.data![position];
+                                },
+                              )
+                            : Center(child: Text('loading'));
+                        } ,
+                      ),
+                )),
               ],
             ),
           );
@@ -214,28 +234,47 @@ class _SearchMapPlaceWidgetState extends State<SearchMapPlaceWidget>
     );
   }
 
-  Widget _placeOption(Place prediction) {
-    String place = prediction.description!;
+    Widget _placeOption(Place prediction, double distance) {
+    String place = prediction.description ?? "";
 
-    return MaterialButton(
-      padding: EdgeInsets.symmetric(horizontal: 5, vertical: 3),
-      onPressed: () => _selectPlace(prediction: prediction),
-      child: ListTile(
-        title: Text(
-          place.length < 45
-              ? "$place"
-              : "${place.replaceRange(45, place.length, "")} ...",
-          style: TextStyle(
-            fontSize: MediaQuery.of(context).size.width * 0.04,
-            color: widget.darkMode ? Colors.grey[100] : Colors.grey[850],
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        MaterialButton(
+          //padding: EdgeInsets.symmetric(horizontal: 12, vertical: 3),
+          onPressed: () => _selectPlace(prediction: prediction),
+          child: ListTile(
+            title: Row(
+              children: <Widget>[
+                Expanded(
+                  child: Text(
+                    "${place.split(',')[0]}",
+                    style: TextStyle(
+                        fontSize: MediaQuery.of(context).size.width * 0.038,
+                        fontWeight: FontWeight.bold),
+                    maxLines: 1,
+                  ),
+                ),
+                Text('$distance km',
+                    style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: MediaQuery.of(context).size.width * 0.038))
+              ],
+            ),
+            subtitle: Text(
+                place.length < 45
+                    ? "$place"
+                    : "${place.replaceRange(45, place.length, "")} ...",
+                style: TextStyle(
+                    fontSize: MediaQuery.of(context).size.width * 0.038)),
+            contentPadding: EdgeInsets.symmetric(
+              horizontal: 10,
+              vertical: 0,
+            ),
           ),
-          maxLines: 1,
         ),
-        contentPadding: EdgeInsets.symmetric(
-          horizontal: 10,
-          vertical: 0,
-        ),
-      ),
+        Container(width: double.infinity, height: 1, color: Colors.grey)
+      ],
     );
   }
 
