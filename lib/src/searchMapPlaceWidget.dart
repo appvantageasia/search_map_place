@@ -360,7 +360,7 @@ class _SearchMapPlaceWidgetState extends State<SearchMapPlaceWidget>
         path += "&types=${widget.placeType!.apiString}";
       }
     }
-    Uri url = Uri.https(authority, path);
+    Uri url = Uri.parse(path);
 
     final response = await http.get(url,headers: headers);
     final json = JSON.jsonDecode(response.body);
