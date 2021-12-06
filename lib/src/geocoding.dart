@@ -5,14 +5,17 @@ class Geocoding {
   String? apiKey;
   String? language;
 
-  Future<dynamic> getGeolocation(String adress) async {
+  Future<Geolocation?> getGeolocation(String adress) async {
     String trimmedAdress = adress.replaceAllMapped(' ', (m) => '+');
     final String authority = "maps.googleapis.com";
+    Map<String, String>  headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json" };
     final String path =
-        "maps/api/geocode/json?address=$trimmedAdress&key=$apiKey&language=$language";
-    final Uri url = Uri.https(authority, path);
+        "https://maps.googleapis.com/maps/api/geocode/json?address=$trimmedAdress&key=$apiKey&language=$language";
+    final Uri url = Uri.parse(path);
     //"https://maps.googleapis.com/maps/api/geocode/json?address=$trimmedAdress&key=$apiKey&language=$language";
-    final response = await http.get(url);
+    final response = await http.get(url,headers: headers);
     final json = JSON.jsonDecode(response.body);
     if (json["error_message"] == null) {
       return Geolocation.fromJSON(json);
