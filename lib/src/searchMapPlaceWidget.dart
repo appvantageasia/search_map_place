@@ -347,7 +347,7 @@ class _SearchMapPlaceWidgetState extends State<SearchMapPlaceWidget>
         "Content-Type": "application/json",
         "Accept": "application/json" };
     String path =
-        "maps/api/place/autocomplete/json?input=$input&key=${widget.apiKey}&language=${widget.language}";
+        "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$input&key=${widget.apiKey}&language=${widget.language}";
 
     //"https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$input&key=${widget.apiKey}&language=${widget.language}";
     if (widget.location != null && widget.radius != null) {
