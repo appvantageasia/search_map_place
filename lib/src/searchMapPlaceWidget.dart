@@ -141,6 +141,7 @@ class _SearchMapPlaceWidgetState extends State<SearchMapPlaceWidget>
   @override
   Widget build(BuildContext context) => Container(
         width: MediaQuery.of(context).size.width * 0.9,
+        color: Colors.transparent,
         child: _searchContainer(
           child: _searchInput(context),
         ),
@@ -284,7 +285,8 @@ class _SearchMapPlaceWidgetState extends State<SearchMapPlaceWidget>
   InputDecoration _inputStyle() {
     return InputDecoration(
       hintText: this.widget.placeholder,
-      border: InputBorder.none,
+      fillColor: Colors.redAccent,
+      filled: true,
       contentPadding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
       hintStyle: TextStyle(
         color: widget.darkMode ? Colors.grey[100] : Colors.grey[850],
