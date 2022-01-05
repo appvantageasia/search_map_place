@@ -1,7 +1,7 @@
 name: search_map_place
 description: A Search Widget that allows users to search for a place while getting autocompletion feedback.
 version: 0.3.0
-author: Lucas Bernardi <lucasbernardi.23@gmail.com>
+publish_to: none
 homepage: https://github.com/Bernardi23/search_map_place
 
 environment:
