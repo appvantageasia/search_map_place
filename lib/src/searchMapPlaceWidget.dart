@@ -201,16 +201,19 @@ class _SearchMapPlaceWidgetState extends State<SearchMapPlaceWidget>
       child: Row(
         children: <Widget>[
           Expanded(
-            child: TextField(
-              decoration: _inputStyle(),
-              controller: _textEditingController,
-              onSubmitted: (_) => _selectPlace(),
-              onEditingComplete: _selectPlace,
-              autofocus: false,
-              focusNode: _fn,
-              style: TextStyle(
-                fontSize: MediaQuery.of(context).size.width * 0.04,
-                color: widget.darkMode ? Colors.grey[100] : Colors.grey[850],
+            child: Material(
+              elevation: 5,
+              child: TextField(
+                decoration: _inputStyle(),
+                controller: _textEditingController,
+                onSubmitted: (_) => _selectPlace(),
+                onEditingComplete: _selectPlace,
+                autofocus: false,
+                focusNode: _fn,
+                style: TextStyle(
+                  fontSize: MediaQuery.of(context).size.width * 0.04,
+                  color: widget.darkMode ? Colors.grey[100] : Colors.grey[850],
+                ),
               ),
             ),
           ),
@@ -285,7 +288,8 @@ class _SearchMapPlaceWidgetState extends State<SearchMapPlaceWidget>
   InputDecoration _inputStyle() {
     return InputDecoration(
       hintText: this.widget.placeholder,
-      fillColor: Colors.redAccent,
+      fillColor: Colors.white,
+      border: InputBorder.none,
       filled: true,
       contentPadding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
       hintStyle: TextStyle(
